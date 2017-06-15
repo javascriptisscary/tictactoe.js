@@ -2,10 +2,14 @@
   width: 100%;
   max-width: 320px;
   height: 320px;
-  background-color: black;
   box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
+  background: rgba(40,40,40,1) -webkit-radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); /* safari */
+  background: rgba(40,40,40,1) -moz-radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); /*firefox */
+  background: rgba(40,40,40,1) -ms-radial-gradient(center, rgba(42,111,76,1)), rgba(0,30,30,.7)); /*ie*/
+  background: rgba(40,40,40,1) radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); 
+  background-size: cover;
 }
 
 .row {
@@ -24,7 +28,7 @@
   width: 33.0%;
   border-right: 1px solid white;
   border-top: 1px solid white;
-  height: 105px;
+  height: 105px; 
   color: white;
   cursor: pointer;
 }
