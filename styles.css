@@ -1,15 +1,20 @@
-.container {
+#container {
   width: 100%;
   max-width: 320px;
   height: 320px;
   box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 100px;
   background: rgba(40,40,40,1) -webkit-radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); /* safari */
   background: rgba(40,40,40,1) -moz-radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); /*firefox */
   background: rgba(40,40,40,1) -ms-radial-gradient(center, rgba(42,111,76,1)), rgba(0,30,30,.7)); /*ie*/
   background: rgba(40,40,40,1) radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); 
   background-size: cover;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+
 }
 
 .row {
@@ -31,4 +36,46 @@
   height: 105px; 
   color: white;
   cursor: pointer;
+}
+
+
+.modalDialog {
+	position: fixed;
+	font-family: Arial, Helvetica, sans-serif;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0,0,0,0.8);
+	z-index: 99999;
+	opacity:1;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+}
+
+.modalDialog > div {
+	width: 400px;
+	position: relative;
+	margin: 10% auto;
+	padding: 5px 20px 13px 20px;
+	border-radius: 10px;
+	background: #fff;
+	background: -moz-linear-gradient(#fff, #999);
+	background: -webkit-linear-gradient(#fff, #999);
+	background: -o-linear-gradient(#fff, #999);
+}
+
+.modalDialog a {
+    font-family: "Chewy";
+    text-decoration: none;
+    margin-left: 50px;
+    margin-right: 50px;
+    color: blue;
+}
+
+.modalDialog a span {
+    font-size: 3em;
+    text-decoration: underline;
+    cursor: pointer;
 }

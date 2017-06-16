@@ -15,12 +15,9 @@ var eight =   document.getElementById('eight');
 var nine  =   document.getElementById('nine');
 
 var squareArray = [];
-
-//add eventlistener to all elements with classname column
-//for (var i=0; i < column.length; ++i) {
-  //var letter = "O"; //make me dynamic
-  //column[i].addEventListener('click', addLetter)
-//}
+var board; //board object
+var spanX = document.getElementById('x');
+var spanO = document.getElementById('o');
 
 //select random # and place letter
 var rand = Math.floor(Math.random()*9+1);
@@ -52,9 +49,10 @@ function winOrBlock()
   // if board has two in a row, then we must go for a block
 }
 
-function Board(squares)
+function Board(squares, playerLetter)
 {
   this.squares = squares;
+  this.playerLetter = playerLetter; // "x" or "o"
 }
 
 function Square(location, occupied, player)
@@ -112,12 +110,11 @@ function boardClick() {
   
   function drawMark(square)
   {
-    //square.innerHTML = "X";
     // https://stackoverflow.com/questions/29911143/how-can-i-animate-the-drawing-of-text-on-a-web-page
     // https://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas
     var ctx = square.getContext("2d"),
     dashLen = 100, dashOffset = dashLen, speed = 3,
-    txt = "x", x = 25, i = 0; //make me dynamic
+    txt = board.playerLetter, x = 25, i = 0; //make me dynamic
 
     ctx.font = "100px Chewy, cursive";
     //ctx.globalAlpha = 0.95;
@@ -133,28 +130,39 @@ function boardClick() {
     else {
       ctx.fillText(txt[i], x, 80);                               // fill final letter
       
-  }
-})();
-    
-    
+    }
+   })();
     
   }
   
+  function chooseXorO()
+  {
+    var modal = document.getElementById('modal');
+    var container = document.getElementById('container');
+    var playerLetter;
+    
+    modal.style.display = "none";
+    removeHandler(spanX, "click", chooseXorO);
+    removeHandler(spanO, "click", chooseXorO);
+    
+    playerLetter = this.id ==="x" ? "x" : "o";
+    board = new Board(squareArray, playerLetter);
+    boardClick();  
+  }
+  
+  function removeHandler(handler, event, functionName) {
+    handler.removeEventListener(event, functionName );
+  }
 
-function init()
-{
-  // init squares
-  for (var i=1; i < 10; ++i) {
-    squareArray.push(new Square(i, false, false));
+  function init()
+  {
+    // init squares
+    for (var i=1; i < 10; ++i) {
+      squareArray.push(new Square(i, false, false));
+    }
+    document.getElementById('x').addEventListener('click', chooseXorO);
+    document.getElementById('o').addEventListener('click', chooseXorO);
   }
-  
-  new Board(squareArray);
-  boardClick();
-  
-  
-    
-
-}
 
 init();
 
