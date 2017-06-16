@@ -2,17 +2,17 @@ document.addEventListener("DOMContentLoaded", function() {
 "use strict";
 
 
-//real men use plain javascript with lame element names
 
-var one   =   document.getElementById('one');
-var two   =   document.getElementById('two');
-var three =   document.getElementById('three'); 
-var four  =   document.getElementById('four');
-var five  =   document.getElementById('five');
-var six   =   document.getElementById('six');
-var seven =   document.getElementById('seven');
-var eight =   document.getElementById('eight');
-var nine  =   document.getElementById('nine');
+//square objects
+var one   =   new Square(1, document.getElementById('one'));
+var two   =   new Square(2, document.getElementById('two'));
+var three =   new Square(3, document.getElementById('three'));
+var four  =   new Square(4, document.getElementById('four'));
+var five  =   new Square(5, document.getElementById('five'));
+var six   =   new Square(6, document.getElementById('six'));
+var seven =   new Square(7, document.getElementById('seven'));
+var eight =   new Square(8, document.getElementById('eight'));
+var nine  =   new Square(9, document.getElementById('nine'));
 
 var squareArray = [];
 var board; //board object
@@ -22,26 +22,26 @@ var spanO = document.getElementById('o');
 //select random # and place letter
 var rand = Math.floor(Math.random()*9+1);
 
-
-
-function addLetter()
+//Square Object
+function Square(location, domElement)
 {
-  if (this.innerHTML === "") {
-    this.innerHTML = letter;
-    addFilledSquare()
-    computerChoice();
-  }
+  this.location = location;
+  this.occupied = false;
+  this.player = false;
+  this.domElement = domElement;
+  this.update = function (player) {
+                  this.occupied = true;
+                  this.player = player;
+                };
 }
 
-function addFilledSquare(square) 
-{
-  Board.filledSquares.push(square); 
-  
-}
 
-function computerChoice ()
-{
 
+
+
+function computerChoice()
+{
+  drawMark(one, "computer");
 }
 
 function winOrBlock()
@@ -55,54 +55,50 @@ function Board(squares, playerLetter)
   this.playerLetter = playerLetter; // "x" or "o"
 }
 
-function Square(location, occupied, player)
-{
-  this.location = location;
-  this.occupied = occupied;
-  this.player = player;
-}
+
 
 function boardClick() {
     document.body.addEventListener('click', function(e) {
     var target = e.target;
+    var player = "player";
     
       switch (target.id) {
         
         case "one":
-          console.log("1");
-          drawMark(target);
+          drawMark(target, player);
+          one.update(true);
           break;
         case "two":
-          console.log("2");
-          drawMark(target);
+          drawMark(target, player);
+          two.update(true);
           break;
         case "three":
-          console.log("3");
-          drawMark(target);
+          drawMark(target, player);
+          three.update(true);
           break;
         case "four":
-          console.log("4");
-          drawMark(target);
+          drawMark(target, player);
+          four.update(true);
           break;
         case "five":
-          console.log("5");
-          drawMark(target);
+          drawMark(target, player);
+          five.update(true);
           break;
         case "six":
-          console.log("6");
-          drawMark(target);
+          drawMark(target, player);
+          six.update(true);
           break;
         case "seven":
-          console.log("7");
-          drawMark(target);
+          drawMark(target, player);
+          seven.update(true);
           break;
         case "eight":
-          console.log("8");
-          drawMark(target);
+          drawMark(target, player);
+          eight.update(true)
           break;
         case "nine":
-          console.log("9");
-          drawMark(target);
+          drawMark(target, player);
+          nine.update(true);
           break;
       }
     });
@@ -141,13 +137,13 @@ function boardClick() {
     var container = document.getElementById('container');
     var playerLetter;
     
-    modal.style.display = "none";
+    modal.style.display = "none"; //remove modal and onClicks
     removeHandler(spanX, "click", chooseXorO);
     removeHandler(spanO, "click", chooseXorO);
     
     playerLetter = this.id ==="x" ? "x" : "o";
-    board = new Board(squareArray, playerLetter);
-    boardClick();  
+    board = new Board(squareArray, playerLetter); //make new board object
+    boardClick(); //setup board to be clicked 
   }
   
   function removeHandler(handler, event, functionName) {
