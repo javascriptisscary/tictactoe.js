@@ -19,10 +19,13 @@ var board; //board object
 var spanX = document.getElementById('x');
 var spanO = document.getElementById('o');
 
+var player;
+var computer;
+
 //select random # and place letter
 var rand = Math.floor(Math.random()*9+1);
 
-//Square Object
+//Object representing a square on the board
 function Square(location, domElement)
 {
   this.location = location;
@@ -35,7 +38,15 @@ function Square(location, domElement)
                 };
 }
 
+function Player(letter)
+{
+  this.letter = letter;
+}
 
+function Computer(letter)
+{
+  this.letter = letter;
+}
 
 
 
@@ -49,11 +60,6 @@ function winOrBlock()
   // if board has two in a row, then we must go for a block
 }
 
-function Board(squares, playerLetter)
-{
-  this.squares = squares;
-  this.playerLetter = playerLetter; // "x" or "o"
-}
 
 
 
@@ -65,40 +71,40 @@ function boardClick() {
       switch (target.id) {
         
         case "one":
-          drawMark(target, player);
-          one.update(true);
+          one.update(true); //update square object
+          drawMark(one); //draw to square
           break;
         case "two":
-          drawMark(target, player);
           two.update(true);
+          drawMark(two);
           break;
         case "three":
-          drawMark(target, player);
           three.update(true);
+          drawMark(three);
           break;
         case "four":
-          drawMark(target, player);
           four.update(true);
+          drawMark(four);
           break;
         case "five":
-          drawMark(target, player);
           five.update(true);
+          drawMark(five);
           break;
         case "six":
-          drawMark(target, player);
           six.update(true);
+          drawMark(six);
           break;
         case "seven":
-          drawMark(target, player);
           seven.update(true);
+          drawMark(seven);
           break;
         case "eight":
-          drawMark(target, player);
-          eight.update(true)
+          eight.update(true);
+          drawMark(eight);
           break;
         case "nine":
-          drawMark(target, player);
           nine.update(true);
+          drawMark(nine);
           break;
       }
     });
@@ -108,9 +114,10 @@ function boardClick() {
   {
     // https://stackoverflow.com/questions/29911143/how-can-i-animate-the-drawing-of-text-on-a-web-page
     // https://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas
-    var ctx = square.getContext("2d"),
-    dashLen = 100, dashOffset = dashLen, speed = 3,
-    txt = board.playerLetter, x = 25, i = 0; //make me dynamic
+    var ctx = square.domElement.getContext("2d");
+    var letter = square.player ? player.letter : computer.letter;
+    var dashLen = 100, dashOffset = dashLen, speed = 3;
+    var txt = letter,  x = 25, i = 0; //make me dynamic
 
     ctx.font = "100px Chewy, cursive";
     //ctx.globalAlpha = 0.95;
@@ -135,14 +142,16 @@ function boardClick() {
   {
     var modal = document.getElementById('modal');
     var container = document.getElementById('container');
-    var playerLetter;
+    var playerLetter, computerLetter;
     
     modal.style.display = "none"; //remove modal and onClicks
     removeHandler(spanX, "click", chooseXorO);
     removeHandler(spanO, "click", chooseXorO);
-    
-    playerLetter = this.id ==="x" ? "x" : "o";
-    board = new Board(squareArray, playerLetter); //make new board object
+    playerLetter = this.id === "x" ? "x" : "o";
+    computerLetter = this.id === "x" ? "o" : "x";    
+    player = new Player(playerLetter);
+    computer = new Computer(computerLetter);
+    console.log(player.letter, computer.letter);
     boardClick(); //setup board to be clicked 
   }
   
@@ -152,10 +161,7 @@ function boardClick() {
 
   function init()
   {
-    // init squares
-    for (var i=1; i < 10; ++i) {
-      squareArray.push(new Square(i, false, false));
-    }
+    
     document.getElementById('x').addEventListener('click', chooseXorO);
     document.getElementById('o').addEventListener('click', chooseXorO);
   }

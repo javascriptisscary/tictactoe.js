@@ -1,3 +1,58 @@
+body {
+  font-family: 'Chewy';
+  background-image: url("http://api.thumbr.it/whitenoise-200x200.png?background=fafafaff&noise=626262&density=15&opacity=30");
+   background-repeat: repeat;
+}
+
+header {
+  text-align:center;
+  font-size: 2em;
+}
+
+header span {
+  color: #86592d;
+}
+
+#outer-container {
+  width: 100%;
+  max-width: 375px;
+  height: 400px;
+  margin-left:auto;
+  margin-right: auto;
+  margin-top: 50px;
+  box-sizing: border-box;
+  background-color: #86592d;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  border-radius: 5px;
+  
+}
+
+.turn {
+  padding-top:5px;
+  
+  padding-bottom: 10px;
+  color: #FFF;
+  text-shadow: 1px 1px 1px black;
+  font-size:1.25em;
+  display: inline-block;
+}
+
+#yourturn {
+  display: inline-block;
+  padding-left: 25px;
+  opacity:1;
+}
+
+#computerturn {
+  display: inline-block;
+  padding-left: 120px;
+  opacity:1;
+}
+
+
+
 #container {
   width: 100%;
   max-width: 320px;
@@ -5,7 +60,6 @@
   box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 100px;
   background: rgba(40,40,40,1) -webkit-radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); /* safari */
   background: rgba(40,40,40,1) -moz-radial-gradient(center, rgba(42,111,76,1), rgba(0,30,30,.7)); /*firefox */
   background: rgba(40,40,40,1) -ms-radial-gradient(center, rgba(42,111,76,1)), rgba(0,30,30,.7)); /*ie*/
