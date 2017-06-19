@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TicTacToe.js</title>
   
-  <link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Chewy|Lato" rel="stylesheet"> 
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <link rel="stylesheet" href="styles.css">
   
 </head>
@@ -49,8 +50,17 @@
 	</div>
   </div>
 </div>
+	
+<button id="accordion">About<i id ="fa" class="fa fa-caret-square-o-down" style="float: right" aria-hidden="true"></i>
+</button>
+<div id="panel">
+  <p>TicTacToe.js was created by <a href="http://kgoulddev.com">Ken Gould.</a></p>
+	<p>It uses a combination of plain JavaScript, HTML, CSS, as well as HTML Canvas for drawing animations.
+	It employs the <a href="https://en.wikipedia.org/wiki/Minimax">minimax algorithm</a> for the computer AI.</p>	
+</div>
   
   <script src="tictactoe.js"></script>
+	<script src="accordion.js"></script>
 </body>
 
 </html>

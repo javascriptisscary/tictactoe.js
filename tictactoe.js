@@ -112,8 +112,6 @@ function boardClick() {
   
   function drawMark(square)
   {
-    // https://stackoverflow.com/questions/29911143/how-can-i-animate-the-drawing-of-text-on-a-web-page
-    // https://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas
     var ctx = square.domElement.getContext("2d");
     var letter = square.player ? player.letter : computer.letter;
     var dashLen = 100, dashOffset = dashLen, speed = 3;
