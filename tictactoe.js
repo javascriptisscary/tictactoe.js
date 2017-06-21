@@ -3,56 +3,88 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-//square objects
-var one   =   new Square(1, document.getElementById('one'));
-var two   =   new Square(2, document.getElementById('two'));
-var three =   new Square(3, document.getElementById('three'));
-var four  =   new Square(4, document.getElementById('four'));
-var five  =   new Square(5, document.getElementById('five'));
-var six   =   new Square(6, document.getElementById('six'));
-var seven =   new Square(7, document.getElementById('seven'));
-var eight =   new Square(8, document.getElementById('eight'));
-var nine  =   new Square(9, document.getElementById('nine'));
+//squares on the board
+var one   =   new Square(document.getElementById('one'));
+var two   =   new Square(document.getElementById('two'));
+var three =   new Square(document.getElementById('three'));
+var four  =   new Square(document.getElementById('four'));
+var five  =   new Square(document.getElementById('five'));
+var six   =   new Square(document.getElementById('six'));
+var seven =   new Square(document.getElementById('seven'));
+var eight =   new Square(document.getElementById('eight'));
+var nine  =   new Square(document.getElementById('nine'));
 
-var squareArray = [];
-var board; //board object
+var board = [one, two, three, four, five, six, seven, eight, nine];
+
+
+
+/* board is the tictactoe board
+   1 | 2 | 3
+   4 | 5 | 6
+   7 | 8 | 9
+*/
+
+var yourTurn = document.getElementById('yourturn');
+var computerTurn = document.getElementById('computerturn');
 var spanX = document.getElementById('x');
 var spanO = document.getElementById('o');
 
-var player;
+var human;
 var computer;
 
 //select random # and place letter
 var rand = Math.floor(Math.random()*9+1);
 
 //Object representing a square on the board
-function Square(location, domElement)
+function Square(domElement)
 {
-  this.location = location;
   this.occupied = false;
-  this.player = false;
+  this.letter = false;
   this.domElement = domElement;
   this.update = function (player) {
                   this.occupied = true;
-                  this.player = player;
+                  this.letter = player.letter;
                 };
 }
 
-function Player(letter)
+function Player(letter) //human or ai.
 {
   this.letter = letter;
 }
-
-function Computer(letter)
-{
-  this.letter = letter;
-}
-
 
 
 function computerChoice()
 {
-  drawMark(one, "computer");
+  two.update(computer);
+  setTimeout(function(){ drawMark(two, checkWin); }, 1500); //set timeout for more realistic computer timing
+}
+
+
+function reset()
+{
+  
+}
+
+
+
+function checkWin(player)
+{
+  var letter = player.letter;
+  console.log (letter, " hi im inside the checkWin function");
+  if (
+    (board[0].letter == letter && board[1].letter == letter && board[2].letter == letter) ||
+    (board[3].letter == letter && board[4].letter == letter && board[5].letter == letter) ||
+    (board[6].letter == letter && board[7].letter == letter && board[8].letter == letter) ||
+    (board[0].letter == letter && board[3].letter == letter && board[6].letter == letter) ||
+    (board[1].letter == letter && board[4].letter == letter && board[7].letter == letter) ||
+    (board[2].letter == letter && board[5].letter == letter && board[8].letter == letter) ||
+    (board[0].letter == letter && board[4].letter == letter && board[8].letter == letter) ||
+    (board[2].letter == letter && board[4].letter == letter && board[6].letter == letter) ) {
+    
+  alert(letter + " wins!");
+  reset();
+  }
+  return false;
 }
 
 function winOrBlock()
@@ -63,63 +95,72 @@ function winOrBlock()
 
 
 
-function boardClick() {
+function onBoardClick() {
     document.body.addEventListener('click', function(e) {
     var target = e.target;
-    var player = "player";
     
       switch (target.id) {
         
         case "one":
-          one.update(true); //update square object
-          drawMark(one); //draw to square
+          one.update(human); //update square object
+          drawMark(one, checkWin); //draw to square
+          computerChoice();
           break;
         case "two":
-          two.update(true);
-          drawMark(two);
+          two.update(human);
+          drawMark(two, checkWin);
+          computerChoice();
           break;
         case "three":
-          three.update(true);
-          drawMark(three);
+          three.update(human);
+          drawMark(three, checkWin);
+          computerChoice();
           break;
         case "four":
-          four.update(true);
-          drawMark(four);
+          four.update(human);
+          drawMark(four, checkWin);
+          computerChoice();
           break;
         case "five":
-          five.update(true);
-          drawMark(five);
+          five.update(human);
+          drawMark(five, checkWin);
+          computerChoice();
           break;
         case "six":
-          six.update(true);
-          drawMark(six);
+          six.update(human);
+          drawMark(six, checkWin);
+          computerChoice();
           break;
         case "seven":
-          seven.update(true);
-          drawMark(seven);
+          seven.update(human);
+          drawMark(seven, checkWin);
+          computerChoice();
           break;
         case "eight":
-          eight.update(true);
-          drawMark(eight);
+          eight.update(human);
+          drawMark(eight, checkWin);
+          computerChoice();
           break;
         case "nine":
-          nine.update(true);
-          drawMark(nine);
+          nine.update(human);
+          drawMark(nine, checkWin);
+          computerChoice();
           break;
       }
     });
-  } //end of boardclick()
+  } //end of onboardclick()
   
-  function drawMark(square)
+  function drawMark(square,callback)
   {
     var ctx = square.domElement.getContext("2d");
-    var letter = square.player ? player.letter : computer.letter;
+    var letter = square.letter;
     var dashLen = 100, dashOffset = dashLen, speed = 3;
     var txt = letter,  x = 25, i = 0; //make me dynamic
 
     ctx.font = "100px Chewy, cursive";
     //ctx.globalAlpha = 0.95;
     ctx.strokeStyle = ctx.fillStyle = "white";
+  
 
     (function loop() {
       ctx.clearRect(x, 0, 60, 150);
@@ -130,7 +171,7 @@ function boardClick() {
     if (dashOffset > 0) requestAnimationFrame(loop);             // animate
     else {
       ctx.fillText(txt[i], x, 80);                               // fill final letter
-      
+      callback(human);                                           //callback so checkWin() runs AFTER the animation finishes
     }
    })();
     
@@ -140,17 +181,18 @@ function boardClick() {
   {
     var modal = document.getElementById('modal');
     var container = document.getElementById('container');
-    var playerLetter, computerLetter;
+    var humanLetter, computerLetter;
     
     modal.style.display = "none"; //remove modal and onClicks
     removeHandler(spanX, "click", chooseXorO);
     removeHandler(spanO, "click", chooseXorO);
-    playerLetter = this.id === "x" ? "x" : "o";
-    computerLetter = this.id === "x" ? "o" : "x";    
-    player = new Player(playerLetter);
-    computer = new Computer(computerLetter);
-    console.log(player.letter, computer.letter);
-    boardClick(); //setup board to be clicked 
+    
+    humanLetter = this.id === "x" ? "x" : "o";
+    computerLetter = this.id === "x" ? "o" : "x";
+
+    human = new Player(humanLetter);
+    computer = new Player(computerLetter);
+    onBoardClick(); //setups up board 
   }
   
   function removeHandler(handler, event, functionName) {
