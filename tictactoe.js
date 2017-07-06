@@ -1,27 +1,25 @@
 document.addEventListener("DOMContentLoaded", function() {
 "use strict";
+/*
+var board = [ //array that is the "board" with Square objects
+  new Square(document.getElementById('one'),   0),   // [0]
+  new Square(document.getElementById('two'),   1),   // [1]
+  new Square(document.getElementById('three'), 2), // [2]
+  new Square(document.getElementById('four'),  3),  // [3]
+  new Square(document.getElementById('five'),  4),  // [4]
+  new Square(document.getElementById('six'),   5),   // [5]
+  new Square(document.getElementById('seven'), 6), // [6]
+  new Square(document.getElementById('eight'), 7), // [7]
+  new Square(document.getElementById('nine'),  8)   // [8]
+]; */
 
+var board = [0,1,2,3,4,5,6,7,8];
 
-
-//squares on the board
-var one   =   new Square(document.getElementById('one'));
-var two   =   new Square(document.getElementById('two'));
-var three =   new Square(document.getElementById('three'));
-var four  =   new Square(document.getElementById('four'));
-var five  =   new Square(document.getElementById('five'));
-var six   =   new Square(document.getElementById('six'));
-var seven =   new Square(document.getElementById('seven'));
-var eight =   new Square(document.getElementById('eight'));
-var nine  =   new Square(document.getElementById('nine'));
-
-var board = [one, two, three, four, five, six, seven, eight, nine];
-
-
-
+var iteration = 0;
 /* board is the tictactoe board
-   1 | 2 | 3
-   4 | 5 | 6
-   7 | 8 | 9
+   0 | 1 | 2
+   3 | 4 | 5
+   6 | 7 | 8
 */
 
 var yourTurn = document.getElementById('yourturn');
@@ -36,13 +34,12 @@ var computer = {};
 var rand = Math.floor(Math.random()*9+1);
 
 //Object representing a square on the board
-function Square(domElement)
+function Square(domElement, position)
 {
-  this.occupied = false;
   this.letter = false;
   this.domElement = domElement;
+  this.position = position;
   this.update = function (player) {
-                  this.occupied = true;
                   this.letter = player.letter;
                 };
 }
@@ -54,22 +51,32 @@ function Player(human,letter) //human or ai.
 }
 
 
-function computerChoice()
-{
-  two.update(computer);
-  setTimeout(function(){ drawMark(two, computer, checkWin); }, 1500); //set timeout for more realistic computer timing
+function computerMove() {
+  var moveIndex;
+  console.log(board);
+  moveIndex = minimax(board, computer).index;
+  board[moveIndex] = computer.letter;
+  console.log(moveIndex);
+  setTimeout(function(){ drawMark(moveIndex.toString(), computer, checkWin); }, 1500); //set timeout for more realistic computer timing
+}
+
+function humanMove(domid) {
+  //square.update(human); //update square object
+  drawMark(domid, human, checkWin);  //draw to square, use checkWin as a callback so that it checks for the win AFTER it finishes the drawing animation
+  computerMove();
+}  
+
+function getSquareElement(id) {
+  return document.getElementById(id);
 }
 
 
-function reset()
-{
+function reset() {
   board.forEach(function(square) {
     var ctx = square.domElement.getContext("2d");
     
     ctx.clearRect(0,0,square.domElement.width, square.domElement.height); //clean canvas
     ctx.beginPath();
-    
-    square.occupied = false;
     square.letter = false;
     
   });
@@ -77,114 +84,108 @@ function reset()
 
 
 
-function checkWin(player)
+function checkWin(board, player)
 {
   var letter = player.letter;
-  console.log ("human: ", player.human, "letter: ", letter, " hi im inside the checkWin function");
+  //console.log(board);
+  //console.log ("human: ", player.human, "letter: ", letter, " hi im inside the checkWin function");
   if (
-    (board[0].letter == letter && board[1].letter == letter && board[2].letter == letter) ||
-    (board[3].letter == letter && board[4].letter == letter && board[5].letter == letter) ||
-    (board[6].letter == letter && board[7].letter == letter && board[8].letter == letter) ||
-    (board[0].letter == letter && board[3].letter == letter && board[6].letter == letter) ||
-    (board[1].letter == letter && board[4].letter == letter && board[7].letter == letter) ||
-    (board[2].letter == letter && board[5].letter == letter && board[8].letter == letter) ||
-    (board[0].letter == letter && board[4].letter == letter && board[8].letter == letter) ||
-    (board[2].letter == letter && board[4].letter == letter && board[6].letter == letter) ) {
+    (board[0] == letter && board[1] == letter && board[2] == letter) ||
+    (board[3] == letter && board[4] == letter && board[5] == letter) ||
+    (board[6] == letter && board[7] == letter && board[8] == letter) ||
+    (board[0] == letter && board[3] == letter && board[6] == letter) ||
+    (board[1] == letter && board[4] == letter && board[7] == letter) ||
+    (board[2] == letter && board[5] == letter && board[8] == letter) ||
+    (board[0] == letter && board[4] == letter && board[8] == letter) ||
+    (board[2] == letter && board[4] == letter && board[6] == letter) ) {
     
-  alert(letter + " wins!");
-  reset();
-  return true;
+  //alert(letter + " wins!");
+  //reset();
+    return true;
   }
-  if (player.human) {
-    computerChoice();
-  }
+  //if (player.human) {
+    //computerMove();
+  //}
   return false;
-}
-
-function winOrBlock()
-{
-  // if board has two in a row, then we must go for a block
-}
-
-function humanMove(square)
-{
-  console.log(square.domElement.id);
-  square.update(human); //update square object
-  
-  drawMark(square, human, checkWin);  //draw to square, use checkWin as a callback so that it checks for the win AFTER it finishes the drawing animation
-                                      // if players wins, returns true
-}                                     
-
+}                                   
 
 function onBoardClick() {
     document.body.addEventListener('click', function(e) {
       var target = e.target;
-      var win = false;
     
+    //FIXME add a if statement so a player cannot click the same spot twice
       switch (target.id) {
-        
-        case "one":
-          humanMove(one);
+        case "0":
+          board[0] = human.letter;
+          humanMove(target.id);
           break;
-        case "two":
-          humanMove(two);
+        case "1":
+          board[1] = human.letter;
+          humanMove(target.id);
           break;
-        case "three":
-          humanMove(three);
+        case "2":
+          board[2] = human.letter;
+          humanMove(target.id);
           break;
-        case "four":
-          humanMove(four);
+        case "3":
+          board[3] = human.letter;
+          humanMove(target.id);
           break;
-        case "five":
-          humanMove(five);
+        case "4":
+          board[4] = human.letter;
+          humanMove(target.id);
           break;
-        case "six":
-          humanMove(six);
+        case "5":
+          board[5] = human.letter;
+          humanMove(target.id);
           break;
-        case "seven":
-          humanMove(seven);
+        case "6":
+          board[6] = human.letter;
+          humanMove(target.id);
           break;
-        case "eight":
-          humanMove(eight);
+        case "7":
+          board[7] = human.letter;
+          humanMove(target.id);
           break;
-        case "nine":
-          humanMove(nine);
+        case "8":
+          board[8] = human.letter;
+          humanMove(target.id);
           break;
       }
     });
   } //end of onboardclick()
   
-  function drawMark(square, player, callback)
+  function drawMark(domid, player, callback)
   {
-    var ctx = square.domElement.getContext("2d");
+    console.log(domid);
+    //var square = ; //grab dom element
+    var ctx = document.getElementById(domid).getContext("2d");    //get ready for canvas animations
     var letter = player.letter;
     var dashLen = 100, dashOffset = dashLen, speed = 3;
-    var txt = letter,  x = 25, i = 0; //make me dynamic
-    var reset = false;
-
+    var txt = letter,  x = 25, i = 0;
+    var won;
+    
     ctx.font = "100px Chewy, cursive";
     //ctx.globalAlpha = 0.95;
     ctx.strokeStyle = ctx.fillStyle = "white";
     
-  
     function loop() {
       ctx.clearRect(x, 0, 60, 150);
       ctx.setLineDash([dashLen - dashOffset, dashOffset - speed]); // create a long dash mask
       dashOffset -= speed;                                         // reduce dash length
       ctx.strokeText(txt[i], x, 80);                               // stroke letter
-      console.log("dashoffset: ", dashOffset);
+      //console.log("dashoffset: ", dashOffset);
 
       if (dashOffset > 0) requestAnimationFrame(loop);             // animate (requestAnimationFrame, call it once to kick it off, and your function recursively calls itself)
       else {
         ctx.fillText(txt[i], x, 80);                               // fill final letter
-        reset = callback(player); //callback so checkWin() runs AFTER the animation finishes
-        console.log("Im reset in the loop:", reset);
-        return reset;
+        //if (callback(board, player)) {        //callback so checkWin() runs AFTER the animation finishes
+          //alert(player.letter+ " wins");
+          //reset();
+        //}
       }
     }
     loop();
-   // console.log("i'm the value of reset outside of the loop: ", reset);
-   // return reset;
   }
   
   function chooseXorO()
@@ -208,10 +209,122 @@ function onBoardClick() {
   function removeHandler(handler, event, functionName) {
     handler.removeEventListener(event, functionName );
   }
+  
+  function findEmpty(reboard) {
+    var emptySquares =[];
+    
+    //find empty squares on board by testing whether they are integers
+    for (var i=0; i<reboard.length; ++i) {
+      if ( Number.isInteger(reboard[i]) ) {
+        emptySquares.push(reboard[i]);
+      }
+    }
+    return emptySquares;
+  }
+  
+  
+  // algorithm for computer ai
+  function minimax(reboard, player)
+  {
+    //console.log("i am reboard ", reboard);
+    var emptySquares = findEmpty(reboard); //available spots on board
+    
+    ++iteration;
+    //if (iteration > 10) {
+      //return;
+    //}
+    //console.log(iteration);
+    // win, lose, and tie 
+    if (checkWin(reboard, human)) {
+     // console.log("checkwin: human, return -10");
+      return {score:-10};
+    }
+	  else if (checkWin(reboard, computer)) {
+      //console.log("checkwin: computer, return + 10");
+      return {score:10};
+	  }
+    else if (emptySquares.length === 0) {
+  	  //console.log("emptysquares: ", emptySquares);
+      return {score:0};
+    }
+    
+    var moves = [];
+    
+    for (var i = 0; i < emptySquares.length; i++) { // loop through available spots
+      //create an object for each and store the index of that spot
+      
+     // if (i ===5) {
+       // return;
+      //}
+      
+      //if (i > 0) {
+        //console.log(i);
+     // }
+     // console.log("emptysquares: ", emptySquares);
+      var move = {}, result, g;
+      move.index = reboard[emptySquares[i]];
+      reboard[emptySquares[i]] = player.letter;
+  	  //console.log("i: ", i, "reboard : ", reboard[emptySquares[i]]);
+      //console.log(reboard);
+      //console.log("move.index: ",move.index);
+      //console.log("player letter: ",reboard[emptySquares[i]]);
+      //console.log("player.human :", player.human); 
+       
+      // set the empty spot to the current player
+      if (player.human) {
+        //console.log("human");
+        g = minimax(reboard, computer);
+        move.score = g.score;
+      } else {
+        //console.log("pc");
+        g = minimax(reboard, human);
+        move.score = g.score;
+      }
+      //console.log("i got out of the recursion");
+      // reset the spot to empty
+      reboard[emptySquares[i]] = move.index;
+      // push the object to the array
+      moves.push(move);
+    } //end emptySquares loop
+    
+    
+      // if it is the computer's turn loop over the moves and choose the move with the highest score
+    var bestMove;
+    var bestScore;
+    
+    if (!player.human) {
+      bestScore = -5000;
+      //console.log("player computer bestscore");
+      
+      for (var i = 0; i < moves.length; ++i) {
+        if (moves[i].score > bestScore) {
+          bestScore = moves[i].score;
+          bestMove = i;
+        }
+      }
+    } else {
+      // else loop over the moves and choose the move with the lowest score
+      bestScore = 5000;
+      //console.log("player human bestscore");
+      for (var i = 0; i < moves.length; ++i) {
+        if (moves[i].score < bestScore) {
+          bestScore = moves[i].score;
+          bestMove = i;
+        }
+      }
+    }
+  
+    // return the chosen move (object) from the moves array
+    return moves[bestMove];
+  }
+    
+    
+  
+  
+  
 
   function init()
   {
-    
     document.getElementById('x').addEventListener('click', chooseXorO);
     document.getElementById('o').addEventListener('click', chooseXorO);
   }
