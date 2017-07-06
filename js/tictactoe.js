@@ -8,34 +8,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var yourTurn = document.getElementById('yourturn');
   var computerTurn = document.getElementById('computerturn');
-  var spanX = document.getElementById('x');
-  var spanO = document.getElementById('o');
 
   var human = {};
   var computer = {};
   
   var round = 0;
-
-  function Player(human,letter) { //human or ai.
-    this.letter = letter;
-    this.human = human;
-  }
-
-  function computerMove() {
-    var moveIndex;
-    moveIndex = minimax(board, computer).index;
-    board[moveIndex] = computer.letter;
-    setTimeout(function(){ drawMark(moveIndex, computer, checkWin); }, 1500); //set timeout for more realistic computer timing
-  }
-
-  function humanMove(square) {
-    if ( Number.isInteger(board[square]) ) { // if board[domid] is an integer (ie hasn't been used already, continue)
-      board[square] = human.letter;
-      drawMark(square, human, checkWin);  //draw to square, use checkWin as a callback so that it checks for the win AFTER it finishes the drawing animation
-      computerMove();
-    }
-  }  
-
+  
   function reset() {
     board = [0,1,2,3,4,5,6,7,8];
     round = 0;
@@ -94,6 +72,21 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
   
+  function computerMove() {  
+    var moveIndex;
+    moveIndex = minimax(board, computer).index;
+    board[moveIndex] = computer.letter;
+    setTimeout(function(){ drawMark(moveIndex, computer, checkWin); }, 1000); //set timeout for more realistic computer timing
+  }
+
+  function humanMove(square) {
+    if ( Number.isInteger(board[square]) ) { // if board[domid] is an integer (ie hasn't been used already, continue)
+      board[square] = human.letter;
+      drawMark(square, human, checkWin);  //draw to square, use checkWin as a callback so that it checks for the win AFTER it finishes the drawing animation
+      computerMove();
+    }
+  }  
+
   function drawMark(square, player, callback) {
     var ctx = document.getElementById(square.toString()).getContext("2d");    //get ready for canvas animations
     var letter = player.letter;
@@ -123,8 +116,10 @@ document.addEventListener("DOMContentLoaded", function() {
     var modal = document.getElementById('modal');
     var container = document.getElementById('container');
     var humanLetter, computerLetter;
+    var spanX = document.getElementById('x');
+    var spanO = document.getElementById('o');
     
-    modal.style.display = "none"; //remove modal and onClicks
+    modal.style.display = "none"; //remove modal and handlers after choice
     removeHandler(spanX, "click", chooseXorO);
     removeHandler(spanO, "click", chooseXorO);
     
@@ -212,7 +207,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       }
     }
-  
     // return the chosen move (object) from the moves array
     return moves[bestMove];
   }
