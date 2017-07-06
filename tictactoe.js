@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var human = {};
   var computer = {};
+  
+  var round = 0;
 
   function Player(human,letter) { //human or ai.
     this.letter = letter;
@@ -27,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function humanMove(square) {
-    console.log(square);
     if ( Number.isInteger(board[square]) ) { // if board[domid] is an integer (ie hasn't been used already, continue)
       board[square] = human.letter;
       drawMark(square, human, checkWin);  //draw to square, use checkWin as a callback so that it checks for the win AFTER it finishes the drawing animation
@@ -37,7 +38,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function reset() {
     board = [0,1,2,3,4,5,6,7,8];
-  
+    round = 0;
+    
     for (var x = 0; x < board.length; ++x) {
       var element = document.getElementById(x.toString());
       var ctx = element.getContext("2d");
@@ -49,6 +51,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function checkWin(board, player, finalcheck) {
     var letter = player.letter;
+    
+    if (round === 9) {
+      alert("Tie!");
+      reset();
+      return;
+    }
     
     if (
       (board[0] == letter && board[1] == letter && board[2] == letter) ||
@@ -104,6 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
       if (dashOffset > 0) requestAnimationFrame(loop);             // animate (requestAnimationFrame, call it once to kick it off, and your function recursively calls itself)
       else {
         ctx.fillText(txt[i], x, 80);                               // fill final letter
+        ++round;
         callback(board,player,true);                               // run callback checkWin, so it runs after animation finishes
       }
     }
