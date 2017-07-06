@@ -11,12 +11,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var human = {};
   var computer = {};
-  
   var round = 0;
   
   function reset() {
     board = [0,1,2,3,4,5,6,7,8];
     round = 0;
+    yourTurn.style.opacity = "1";
+    computerTurn.style.opacity = "0";
     
     for (var x = 0; x < board.length; ++x) {
       var element = document.getElementById(x.toString());
@@ -67,16 +68,23 @@ document.addEventListener("DOMContentLoaded", function() {
       
       //html ids of all squares are numbers 0-8. on click, if html id exists and is a number, continue with human move
       if ( !isNaN(number) ) {
+        //yourTurn.style.opacity = "0";
         humanMove(number);
       }
     });
   }
   
-  function computerMove() {  
+  function changeOpacity() {
+    yourTurn.style.opacity = yourTurn.style.opacity === "1" ? "0" : "1";
+    computerTurn.style.opacity = computerTurn.style.opacity === "1" ? "0" : "1";
+  }
+  
+  function computerMove() {
     var moveIndex;
+    //computerTurn.style.opacity = "1";
     moveIndex = minimax(board, computer).index;
     board[moveIndex] = computer.letter;
-    setTimeout(function(){ drawMark(moveIndex, computer, checkWin); }, 1000); //set timeout for more realistic computer timing
+    setTimeout(function(){ drawMark(moveIndex, computer, checkWin); }, 2000); //set timeout for more realistic computer timing
   }
 
   function humanMove(square) {
@@ -106,7 +114,9 @@ document.addEventListener("DOMContentLoaded", function() {
       else {
         ctx.fillText(txt[i], x, 80);                               // fill final letter
         ++round;
-        callback(board,player,true);                               // run callback checkWin, so it runs after animation finishes
+        changeOpacity(); 
+        callback(board,player,true);                              // run callback checkWin, so it runs after animation finishes
+                                                 
       }
     }
     loop();
@@ -128,7 +138,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     human = new Player(true, humanLetter);
     computer = new Player(false, computerLetter);
-    onBoardClick(); //setups up board 
+    onBoardClick(); //setups up board
+    yourTurn.style.opacity = "1";
   }
   
   function removeHandler(handler, event, functionName) {
@@ -146,7 +157,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return emptySquares;
   }
-  
   
   // recursive algorithm for computer ai
   function minimax(reboard, player) {

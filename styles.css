@@ -1,7 +1,7 @@
 body {
   font-family: 'Chewy';
   background-image: url("http://api.thumbr.it/whitenoise-200x200.png?background=fafafaff&noise=626262&density=15&opacity=30");
-   background-repeat: repeat;
+  background-repeat: repeat;
 }
 
 header {
@@ -35,23 +35,24 @@ header span {
   padding-bottom: 10px;
   color: #FFF;
   text-shadow: 1px 1px 1px black;
-  font-size:1.25em;
+  font-size:1.5em;
   display: inline-block;
 }
 
 #yourturn {
   display: inline-block;
   padding-left: 25px;
-  opacity:1;
+  opacity:0;
+  transition: all ease-in .4s;
 }
 
 #computerturn {
   display: inline-block;
-  padding-left: 120px;
-  opacity:1;
+  padding-left: 125px;
+  opacity:0;
+  transition: all ease-in .4s;
+  font-family: "Orbitron", sans;
 }
-
-
 
 #container {
   width: 100%;
