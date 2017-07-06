@@ -1,21 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
 "use strict";
-/*
-var board = [ //array that is the "board" with Square objects
-  new Square(document.getElementById('one'),   0),   // [0]
-  new Square(document.getElementById('two'),   1),   // [1]
-  new Square(document.getElementById('three'), 2), // [2]
-  new Square(document.getElementById('four'),  3),  // [3]
-  new Square(document.getElementById('five'),  4),  // [4]
-  new Square(document.getElementById('six'),   5),   // [5]
-  new Square(document.getElementById('seven'), 6), // [6]
-  new Square(document.getElementById('eight'), 7), // [7]
-  new Square(document.getElementById('nine'),  8)   // [8]
-]; */
 
 var board = [0,1,2,3,4,5,6,7,8];
 
-var iteration = 0;
 /* board is the tictactoe board
    0 | 1 | 2
    3 | 4 | 5
@@ -33,62 +20,39 @@ var computer = {};
 //select random # and place letter
 var rand = Math.floor(Math.random()*9+1);
 
-//Object representing a square on the board
-function Square(domElement, position)
-{
-  this.letter = false;
-  this.domElement = domElement;
-  this.position = position;
-  this.update = function (player) {
-                  this.letter = player.letter;
-                };
-}
-
 function Player(human,letter) //human or ai.
 {
   this.letter = letter;
   this.human = human;
 }
 
-
 function computerMove() {
   var moveIndex;
-  console.log(board);
   moveIndex = minimax(board, computer).index;
   board[moveIndex] = computer.letter;
-  console.log(moveIndex);
   setTimeout(function(){ drawMark(moveIndex.toString(), computer, checkWin); }, 1500); //set timeout for more realistic computer timing
 }
 
 function humanMove(domid) {
-  //square.update(human); //update square object
   drawMark(domid, human, checkWin);  //draw to square, use checkWin as a callback so that it checks for the win AFTER it finishes the drawing animation
   computerMove();
 }  
 
-function getSquareElement(id) {
-  return document.getElementById(id);
-}
-
-
 function reset() {
-  board.forEach(function(square) {
-    var ctx = square.domElement.getContext("2d");
+  board = [0,1,2,3,4,5,6,7,8];
+  
+  for (var x = 0; x < board.length; ++x) {
+    var element = document.getElementById(x.toString());
+    var ctx = element.getContext("2d");
     
-    ctx.clearRect(0,0,square.domElement.width, square.domElement.height); //clean canvas
+    ctx.clearRect(0,0,element.width, element.height); //clean canvas
     ctx.beginPath();
-    square.letter = false;
-    
-  });
+  }
 }
 
-
-
-function checkWin(board, player)
-{
+function checkWin(board, player, finalcheck) {
   var letter = player.letter;
-  //console.log(board);
-  //console.log ("human: ", player.human, "letter: ", letter, " hi im inside the checkWin function");
+  
   if (
     (board[0] == letter && board[1] == letter && board[2] == letter) ||
     (board[3] == letter && board[4] == letter && board[5] == letter) ||
@@ -99,13 +63,17 @@ function checkWin(board, player)
     (board[0] == letter && board[4] == letter && board[8] == letter) ||
     (board[2] == letter && board[4] == letter && board[6] == letter) ) {
     
-  //alert(letter + " wins!");
-  //reset();
+    if (finalcheck) {
+      if (player.human) {
+        alert("You Wins!");
+      } else {
+        alert("Computer Wins!");
+      }
+      reset();
+    }
     return true;
   }
-  //if (player.human) {
-    //computerMove();
-  //}
+
   return false;
 }                                   
 
@@ -166,7 +134,6 @@ function onBoardClick() {
     var won;
     
     ctx.font = "100px Chewy, cursive";
-    //ctx.globalAlpha = 0.95;
     ctx.strokeStyle = ctx.fillStyle = "white";
     
     function loop() {
@@ -174,15 +141,11 @@ function onBoardClick() {
       ctx.setLineDash([dashLen - dashOffset, dashOffset - speed]); // create a long dash mask
       dashOffset -= speed;                                         // reduce dash length
       ctx.strokeText(txt[i], x, 80);                               // stroke letter
-      //console.log("dashoffset: ", dashOffset);
 
       if (dashOffset > 0) requestAnimationFrame(loop);             // animate (requestAnimationFrame, call it once to kick it off, and your function recursively calls itself)
       else {
         ctx.fillText(txt[i], x, 80);                               // fill final letter
-        //if (callback(board, player)) {        //callback so checkWin() runs AFTER the animation finishes
-          //alert(player.letter+ " wins");
-          //reset();
-        //}
+        callback(board,player,true);                               // run callback checkWin, so it runs after animation finishes
       }
     }
     loop();
@@ -210,41 +173,32 @@ function onBoardClick() {
     handler.removeEventListener(event, functionName );
   }
   
-  function findEmpty(reboard) {
+  function findEmpty(board) {
     var emptySquares =[];
     
     //find empty squares on board by testing whether they are integers
-    for (var i=0; i<reboard.length; ++i) {
-      if ( Number.isInteger(reboard[i]) ) {
-        emptySquares.push(reboard[i]);
+    for (var i=0; i<board.length; ++i) {
+      if ( Number.isInteger(board[i]) ) {
+        emptySquares.push(board[i]);
       }
     }
     return emptySquares;
   }
   
   
-  // algorithm for computer ai
+  // recursive algorithm for computer ai
   function minimax(reboard, player)
   {
-    //console.log("i am reboard ", reboard);
     var emptySquares = findEmpty(reboard); //available spots on board
     
-    ++iteration;
-    //if (iteration > 10) {
-      //return;
-    //}
-    //console.log(iteration);
-    // win, lose, and tie 
-    if (checkWin(reboard, human)) {
-     // console.log("checkwin: human, return -10");
+    // each move is assigned a score by the resulting outcome. if there is not yet an outcome, continue on with recursion
+    if (checkWin(reboard, human, false)) {
       return {score:-10};
     }
-	  else if (checkWin(reboard, computer)) {
-      //console.log("checkwin: computer, return + 10");
+	  else if (checkWin(reboard, computer, false)) {
       return {score:10};
 	  }
     else if (emptySquares.length === 0) {
-  	  //console.log("emptysquares: ", emptySquares);
       return {score:0};
     }
     
@@ -252,50 +206,30 @@ function onBoardClick() {
     
     for (var i = 0; i < emptySquares.length; i++) { // loop through available spots
       //create an object for each and store the index of that spot
+      var move = {};
+      var game;
       
-     // if (i ===5) {
-       // return;
-      //}
-      
-      //if (i > 0) {
-        //console.log(i);
-     // }
-     // console.log("emptysquares: ", emptySquares);
-      var move = {}, result, g;
       move.index = reboard[emptySquares[i]];
-      reboard[emptySquares[i]] = player.letter;
-  	  //console.log("i: ", i, "reboard : ", reboard[emptySquares[i]]);
-      //console.log(reboard);
-      //console.log("move.index: ",move.index);
-      //console.log("player letter: ",reboard[emptySquares[i]]);
-      //console.log("player.human :", player.human); 
-       
-      // set the empty spot to the current player
+      reboard[emptySquares[i]] = player.letter; // set the empty spot to the current player letter
+  	  
       if (player.human) {
-        //console.log("human");
-        g = minimax(reboard, computer);
-        move.score = g.score;
+        game = minimax(reboard, computer);
+        move.score = game.score;
       } else {
-        //console.log("pc");
-        g = minimax(reboard, human);
-        move.score = g.score;
+        game = minimax(reboard, human);
+        move.score = game.score;
       }
-      //console.log("i got out of the recursion");
-      // reset the spot to empty
-      reboard[emptySquares[i]] = move.index;
-      // push the object to the array
-      moves.push(move);
+      
+      reboard[emptySquares[i]] = move.index; // reset the spot to empty when completed
+      moves.push(move); // push the object to the moves array
     } //end emptySquares loop
     
-    
-      // if it is the computer's turn loop over the moves and choose the move with the highest score
     var bestMove;
     var bestScore;
     
+    // if it is the computer's turn loop over the moves and choose the move with the highest score
     if (!player.human) {
-      bestScore = -5000;
-      //console.log("player computer bestscore");
-      
+      bestScore = -8000;
       for (var i = 0; i < moves.length; ++i) {
         if (moves[i].score > bestScore) {
           bestScore = moves[i].score;
@@ -304,8 +238,7 @@ function onBoardClick() {
       }
     } else {
       // else loop over the moves and choose the move with the lowest score
-      bestScore = 5000;
-      //console.log("player human bestscore");
+      bestScore = 8000;
       for (var i = 0; i < moves.length; ++i) {
         if (moves[i].score < bestScore) {
           bestScore = moves[i].score;
@@ -317,11 +250,6 @@ function onBoardClick() {
     // return the chosen move (object) from the moves array
     return moves[bestMove];
   }
-    
-    
-  
-  
-  
 
   function init()
   {
